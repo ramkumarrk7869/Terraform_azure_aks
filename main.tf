@@ -7,40 +7,41 @@ resource "azurerm_resource_group" "rg" {
   location = "westus2"
 }
 
-# resource "azurerm_kubernetes_cluster" "aks" {
-#   name                         = "myaks"
-#   location                     = "eastasia"
-#   resource_group_name          = azurerm_resource_group.rg.name
-#   dns_prefix                   = "myaks-dns"
-#   image_cleaner_enabled        = true
-#   image_cleaner_interval_hours = 168
-#   workload_identity_enabled    = true
-# 
-#   default_node_pool {
-#     name                 = "agentpool"
-#     node_count           = 1
-#     vm_size              = "Standard_DS2_v2"
-#     auto_scaling_enabled = true
-#     max_count            = 2
-#     min_count            = 1
-#     zones                = ["1", ]
-# 
-#     upgrade_settings {
-#       drain_timeout_in_minutes      = 0
-#       max_surge                     = "10%"
-#       node_soak_duration_in_minutes = 0
-# 
-#     }
-#   }
-# 
-#   identity {
-#     type = "SystemAssigned"
-#   }
-# 
-#   lifecycle {
-#     ignore_changes = all
-#   }
-# }
+resource "azurerm_kubernetes_cluster" "aks" {
+  name                         = "myaks"
+  location                     = "eastasia"
+  resource_group_name          = azurerm_resource_group.rg.name
+  dns_prefix                   = "myaks-dns"
+  image_cleaner_enabled        = true
+  image_cleaner_interval_hours = 168
+  workload_identity_enabled    = true
+  oidc_issuer_enabled          = true
+
+  default_node_pool {
+    name                 = "agentpool"
+    node_count           = 1
+    vm_size              = "Standard_DS2_v2"
+    auto_scaling_enabled = true
+    max_count            = 2
+    min_count            = 1
+    zones                = ["1", ]
+
+    upgrade_settings {
+      drain_timeout_in_minutes      = 0
+      max_surge                     = "10%"
+      node_soak_duration_in_minutes = 0
+
+    }
+  }
+
+  identity {
+    type = "SystemAssigned"
+  }
+
+  lifecycle {
+    ignore_changes = all
+  }
+}
 
 resource "azurerm_container_registry" "acr" {
   name                = "myacr198"
